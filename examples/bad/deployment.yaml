@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payments
+spec:
+  replicas: 2
+  selector:
+    matchLabels: {app: payments}
+  template:
+    metadata:
+      labels: {app: payments}
+    spec:
+      hostNetwork: true
+      containers:
+        - name: api
+          image: registry.example.com/payments:latest
+          securityContext:
+            privileged: true
+          env:
+            - name: DB_PASSWORD
+              value: hunter2hunter2
+          volumeMounts:
+            - {name: docker, mountPath: /var/run/docker.sock}
+      volumes:
+        - name: docker
+          hostPath: {path: /var/run/docker.sock}
